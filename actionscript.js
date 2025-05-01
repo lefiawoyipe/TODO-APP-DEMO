@@ -14,6 +14,7 @@ const inputBox = document.getElementById("input-box");
       const timestamp = new Date().toLocaleString(); //Gets the current date and time
       
       const spanText = document.createElement("span");
+      spanText.className= "task-text";
       spanText.textContent = taskText;
       li.appendChild(spanText); //Creates a span for the task text, sets the content, and adds it to the <li>.
 
@@ -22,6 +23,17 @@ const inputBox = document.getElementById("input-box");
       small.textContent = `Added on ${timestamp}`;
       li.appendChild(small);//Creates a timestamp <small> element and appends it.
 
+    const edit = document.createElement("span");
+    edit.innerHTML = "✏️";
+    edit.className = "edit-btn";
+    li.appendChild(edit);
+
+    const confirm = document.createElement("span");
+    confirm.innerHTML = "✔️";
+    confirm.className = "confirm-btn";
+    confirm.style.display = "none";
+    li.appendChild(confirm);
+  
       const del = document.createElement("span");
       del.textContent = "\u00d7";
       del.className = "delete-btn";
@@ -34,17 +46,62 @@ const inputBox = document.getElementById("input-box");
 
     }
 //Adds an event listener to detect clicks within the list.
-    listContainer.addEventListener("click", function(e) {
-      if (e.target.tagName === "LI" || e.target.tagName === "SPAN" && !e.target.classList.contains("delete-btn")) {
-        e.target.closest("li").classList.toggle("checked");
-        //If the user clicks the <li> or the task text span (but not the delete button), it toggles the checked class (used to strike through completed tasks).
-      } else if (e.target.classList.contains("delete-btn")) {
-        e.target.parentElement.remove();//If the user clicks the X (delete), remove that specific <li> from the DOM.
+listContainer.addEventListener("click", function(e) {
+    const li = e.target.closest("li"); // Safely get the <li> container
+  
+    if (!li) return; // Prevents error if clicked outside a task
+  
+    if (
+      e.target.tagName === "LI" || 
+      (e.target.tagName === "SPAN" && 
+       !e.target.classList.contains("delete-btn") && 
+       !e.target.classList.contains("edit-btn") && 
+       !e.target.classList.contains("confirm-btn"))
+    ) {
+      li.classList.toggle("checked");
+    } 
+    else if (e.target.classList.contains("delete-btn")) {
+      li.remove();
+    } 
+    else if (e.target.classList.contains("edit-btn")) {
+      if (listContainer.querySelector("input.task-edit")) {
+        alert("Finish editing the current task first.");
+        return;
       }
-      saveData();
-    });
+  
+      const span = li.querySelector(".task-text");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = span.textContent;
+      input.className = "task-edit";
+      li.insertBefore(input, span);
+      span.style.display = "none";
+  
+      li.querySelector(".edit-btn").style.display = "none";
+      li.querySelector(".confirm-btn").style.display = "inline-block";
+    } 
+    else if (e.target.classList.contains("confirm-btn")) {
+      const input = li.querySelector("input.task-edit");
+      const span = li.querySelector(".task-text");
+      if (input && input.value.trim() !== "") {
+        span.textContent = input.value.trim();
+        span.style.display = "inline";
+        input.remove();
+  
+        li.querySelector(".edit-btn").style.display = "inline-block";
+        li.querySelector(".confirm-btn").style.display = "none";
+        saveData();
+      } else {
+        alert("Task cannot be empty!");
+      }
+    }
+  
+    saveData();
+  });
+  
 
-    listContainer.addEventListener("dblclick", function(e) //On double-click of a task's text BUT NOT THE RED X, it prompts for editing.
+
+    /*listContainer.addEventListener("dblclick", function(e) //On double-click of a task's text BUT NOT THE RED X, it prompts for editing.
      {
       if (e.target.tagName === "SPAN" && !e.target.classList.contains("delete-btn")) {
         const newText = prompt("Edit task:", e.target.textContent);
@@ -53,7 +110,7 @@ const inputBox = document.getElementById("input-box");
           saveData(); //Replaces the task text with the user's new input and saves it.
         }
       }
-    });
+    });*/
 
     function clearAll() {
       listContainer.innerHTML = "";
