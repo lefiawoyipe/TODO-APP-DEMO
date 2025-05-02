@@ -27,12 +27,16 @@ const inputBox = document.getElementById("input-box");
     edit.innerHTML = "✏️";
     edit.className = "edit-btn";
     li.appendChild(edit);
-
+   
+   // const newTimestamp = new Date().toLocaleString();
+   // small.textContent = `Edited on ${newTimestamp}`;
     const confirm = document.createElement("span");
     confirm.innerHTML = "✔️";
     confirm.className = "confirm-btn";
     confirm.style.display = "none";
+   
     li.appendChild(confirm);
+    
   
       const del = document.createElement("span");
       del.textContent = "\u00d7";
@@ -87,6 +91,10 @@ listContainer.addEventListener("click", function(e) {
         span.textContent = input.value.trim();
         span.style.display = "inline";
         input.remove();
+        // Updates the timestamp
+    const timestampElement = li.querySelector(".timestamp");
+    const newTimestamp = new Date().toLocaleString();
+    timestampElement.textContent = `Edited on ${newTimestamp}`;
   
         li.querySelector(".edit-btn").style.display = "inline-block";
         li.querySelector(".confirm-btn").style.display = "none";

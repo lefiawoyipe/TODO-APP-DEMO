@@ -7,3 +7,4 @@ When a task is added it displays the task itself and the time the task was creat
 ![alt text](<Screenshot 2025-05-01 173323.png>)
 ![alt text](<Screenshot 2025-05-01 173406.png>)
 ![alt text](<Screenshot 2025-05-01 173454.png>)
+![alt text](image.png)
